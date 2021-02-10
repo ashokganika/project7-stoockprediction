@@ -1,135 +1,11 @@
+from multiprocessing import Process
+import multiprocessing
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 import jwt
-data = [
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Microsoft Inc",
-        'symbol': "MSFT",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Google Inc",
-        'symbol': "GGL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    },
-    {
-        'company': "Apple Inc",
-        'symbol': "AAPL",
-        'Close': 133.94,
-        'Open': 136.3,
-        'Volume': 26197638,
-        'low': 132.42,
-        'high': 134,
-    }]
+from data import data
 
 
 app = Flask(__name__)
@@ -142,9 +18,9 @@ mongo = PyMongo(app)
 mongo_op = mongo.db.users
 
 
-@app.route("/image")
-def get_image():
-    return send_file('public/LSTM.png')
+@app.route("/image/<string:quote>")
+def get_image(quote):
+    return send_file('public/{}.png'.format(quote.lower()))
 
 
 @app.route("/register", methods=['POST'])
@@ -185,9 +61,21 @@ def login():
 @app.route("/view-stock")
 def viewStokc():
     return jsonify(data)
-# @app.route("/view-stock")
-# def viewStock():
 
 
-if __name__ == '__main__':
+@app.route("/predict-stock/<string:quote>")
+def predictStocks(quote):
+    from predictstock import predictStock
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+
+    task = Process(target=predictStock, args=(quote, return_dict))
+    task.start()
+    task.join()
+    print("dgdsgs", return_dict)
+
+    return jsonify('msg:model Trained sucessfully')
+
+
+if __name__ == "__main__":
     app.run(debug=True)
