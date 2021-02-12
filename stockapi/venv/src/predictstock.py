@@ -1,4 +1,6 @@
+import os
 import pandas as pd
+
 import numpy as np
 import yfinance as yf
 from datetime import datetime
@@ -125,7 +127,9 @@ def predictStock(quote, l):
     plt.plot(predicted_stock_price, label='Predicted Price')
 
     plt.legend(loc=4)
-    plt.savefig(''+quote+'.png')
+    # plt.savefig(os.path.join(os.path.abspath(__file__)))
+
+    plt.savefig(os.path.join(os.getcwd(), 'public/{}.png'.format(quote)))
     plt.close(fig)
 
     error_lstm = math.sqrt(mean_squared_error(

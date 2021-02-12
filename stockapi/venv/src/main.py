@@ -16,6 +16,7 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/users"
 app.config['secret'] = 'hgajashj'
 mongo = PyMongo(app)
 mongo_op = mongo.db.users
+mongo_op_stock = mongo.db.stock
 
 
 @app.route("/image/<string:quote>")
@@ -30,13 +31,15 @@ def register():
         lastname = request.json['lastname']
         email = request.json['email']
         password = request.json['password']
+        role = '0'
+
         auth = mongo_op.find_one({'email': email})
         if auth:
             return jsonify({'msg': 'email already exists'}), 401
         password = bcrypt.generate_password_hash(password)
 
         userdata = {'firstname': firstname, 'lastname': lastname,
-                    'email': email, 'password': password}
+                    'email': email, 'password': password, 'role': role}
         mongo_op.insert_one(userdata)
         return jsonify({'msg': 'registerd sucessfully'})
 
@@ -51,7 +54,7 @@ def login():
             if(bcrypt.check_password_hash(auth['password'], password)):
                 token = jwt.encode({'email': auth['email']}, app.config.get(
                     'secret'), algorithm='HS256')
-                return jsonify({'firstname': auth['firstname'], 'token': token}), 200
+                return jsonify({'firstname': auth['firstname'], 'token': token, 'role': auth['role']}), 200
             return jsonify({'msg': 'email or password not matched'}), 401
 
         else:
@@ -60,6 +63,7 @@ def login():
 
 @app.route("/view-stock")
 def viewStokc():
+    import os
     return jsonify(data)
 
 
@@ -73,8 +77,29 @@ def predictStocks(quote):
     task.start()
     task.join()
     print("dgdsgs", return_dict)
+    import json
+    stockdata = {'company': str(quote.lower()), 'data': json.dumps(
+        str(return_dict._getvalue()))}
 
-    return jsonify('msg:model Trained sucessfully')
+    mongo_op_stock.insert_one(stockdata)
+
+    return jsonify({'msg': 'sucessfulyy trained'})
+
+
+@app.route("/vew-predicted-stock/<string:quote>/<token>", methods=['GET'])
+def viewPredictedStock(quote, token):
+    if(token):
+        dToken = str(token).split('"')[1]
+        decode = jwt.decode(
+            dToken, app.config['secret'], algorithms='HS256')
+        if (decode):
+            if (mongo_op.find_one({'email': decode['email']})):
+                data = [{'company': x['company'], 'data':x['data']}
+                        for x in mongo_op_stock.find({'company': quote.lower()})]
+                return jsonify(data[-1], decode)
+            return jsonify({'msg:access denied'})
+        return jsonify({'msg:invalid token'})
+    return jsonify({'msg': 'token should be provided'})
 
 
 if __name__ == "__main__":

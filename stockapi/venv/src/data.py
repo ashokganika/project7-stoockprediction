@@ -19,7 +19,7 @@ data = [
     },
     {
         'company': "Apple Inc",
-        'symbol': "AAPL",
+        'symbol': "TSLA",
         'Close': 133.94,
         'Open': 136.3,
         'Volume': 26197638,
