@@ -109,10 +109,13 @@ def viewPredictedStock(quote, token):
 @app.route("/view-past-predicted-stock/<quote>", methods=['GET'])
 def viewPastPrediectedStock(quote):
     # print('hello from past ')
-    data = [mongo_op_history.find_one({'company': quote.lower()})]
-    print('sdsssfdgdfgjhgg fdhg hjfghdhgffdh', data)
+    data = [mongo_op_history.find_one({'company': quote.lower()})][0]
+    result = data['history']
+    hisroty = [{'data': x['data'], 'real':x['real']} for x in result]
+
+    print('sdsssfdgdfgjhgg fdhg hjfghdhgffdh', hisroty)
     # print('data', data)
-    return jsonify({'mfdssd': quote})
+    return jsonify(hisroty)
 
 
 if __name__ == "__main__":
