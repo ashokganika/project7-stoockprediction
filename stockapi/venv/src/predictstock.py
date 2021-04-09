@@ -61,7 +61,7 @@ def predictStock(quote, l):
     regressor = Sequential()
 
     # Add first LSTM layer
-    regressor.add(LSTM(units=50, return_sequences=True,
+    regressor.add(LSTM(units=50, activation="relu", return_sequences=True,
                        input_shape=(X_train.shape[1], 1)))
     # units=no. of neurons in layer
     # input_shape=(timesteps,no. of cols/features)
@@ -69,15 +69,15 @@ def predictStock(quote, l):
     regressor.add(Dropout(0.1))
 
     # Add 2nd LSTM layer
-    regressor.add(LSTM(units=50, return_sequences=True))
+    regressor.add(LSTM(units=50, activation="relu", return_sequences=True))
     regressor.add(Dropout(0.1))
 
     # Add 3rd LSTM layer
-    regressor.add(LSTM(units=50, return_sequences=True))
+    regressor.add(LSTM(units=50, activation="relu", return_sequences=True))
     regressor.add(Dropout(0.1))
 
     # Add 4th LSTM layer
-    regressor.add(LSTM(units=50, return_sequences=False))
+    regressor.add(LSTM(units=50, activation="relu", return_sequences=False))
     regressor.add(Dropout(0.1))
 
     # Add o/p layer
@@ -87,7 +87,7 @@ def predictStock(quote, l):
     regressor.compile(optimizer='adam', loss='mean_squared_error')
 
     # Training
-    regressor.fit(X_train, y_train, epochs=1, batch_size=32)
+    regressor.fit(X_train, y_train, epochs=10, batch_size=5)
     # For lstm, batch_size=power of 2
 
 # Testing

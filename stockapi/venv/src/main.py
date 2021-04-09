@@ -17,6 +17,7 @@ app.config['secret'] = 'hgajashj'
 mongo = PyMongo(app)
 mongo_op = mongo.db.users
 mongo_op_stock = mongo.db.stock
+mongo_op_history = mongo.db.history
 
 
 @app.route("/image/<string:quote>")
@@ -73,7 +74,7 @@ def predictStocks(quote):
     manager = multiprocessing.Manager()
     return_dict = manager.dict()
 
-    task = Process(target=predictStock, args=(quote, return_dict))
+    task = Process(target=predictStock, args=(quote.lower(), return_dict))
     task.start()
     task.join()
     print("dgdsgs", return_dict)
@@ -82,6 +83,9 @@ def predictStocks(quote):
         str(return_dict._getvalue()))}
 
     mongo_op_stock.insert_one(stockdata)
+    mongo_op_history.update({'company': quote.lower()}, {'$push': {
+        'history': stockdata
+    }})
 
     return jsonify({'msg': 'sucessfulyy trained'})
 
@@ -100,6 +104,15 @@ def viewPredictedStock(quote, token):
             return jsonify({'msg:access denied'})
         return jsonify({'msg:invalid token'})
     return jsonify({'msg': 'token should be provided'})
+
+
+@app.route("/view-past-predicted-stock/<quote>", methods=['GET'])
+def viewPastPrediectedStock(quote):
+    # print('hello from past ')
+    data = [mongo_op_history.find_one({'company': quote.lower()})]
+    print('sdsssfdgdfgjhgg fdhg hjfghdhgffdh', data)
+    # print('data', data)
+    return jsonify({'mfdssd': quote})
 
 
 if __name__ == "__main__":
