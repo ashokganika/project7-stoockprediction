@@ -87,7 +87,7 @@ def predictStock(quote, l):
     regressor.compile(optimizer='adam', loss='mean_squared_error')
 
     # Training
-    regressor.fit(X_train, y_train, epochs=10, batch_size=5)
+    regressor.fit(X_train, y_train, epochs=40, batch_size=30)
     # For lstm, batch_size=power of 2
 
 # Testing

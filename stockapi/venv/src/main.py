@@ -83,9 +83,9 @@ def predictStocks(quote):
         str(return_dict._getvalue()))}
 
     mongo_op_stock.insert_one(stockdata)
-    mongo_op_history.update({'company': quote.lower()}, {'$push': {
-        'history': stockdata
-    }})
+    # mongo_op_history.update({'company': quote.lower()}, {'$push': {
+    #     'history': stockdata
+    # }})
 
     return jsonify({'msg': 'sucessfulyy trained'})
 
@@ -113,7 +113,7 @@ def viewPastPrediectedStock(quote):
     result = data['history']
     hisroty = [{'data': x['data'], 'real':x['real']} for x in result]
 
-    print('sdsssfdgdfgjhgg fdhg hjfghdhgffdh', hisroty)
+    # print('sdsssfdgdfgjhgg fdhg hjfghdhgffdh', hisroty)
     # print('data', data)
     return jsonify(hisroty)
 

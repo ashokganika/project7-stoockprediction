@@ -1,0 +1,10 @@
+{"_id":{"$oid":"607ba86b0de3f3cb43c72250"},"company":"aapl","data":"\"{'lstm_pred': 115.808, 'error_lstm': 9.44299435330924}\""}
+{"_id":{"$oid":"607baa0c65fa1564ad65a117"},"company":"aapl","data":"\"{'lstm_pred': 131.30695, 'error_lstm': 15.762003208446776}\""}
+{"company":"msft","data":"\"{'lstm_pred': 261.3452, 'error_lstm': 15.762003208446776}\""}
+{"company":"tsla","data":"\"{'lstm_pred': 739.01, 'error_lstm': 15.762003208446776}\""}
+{"company":"amzn","data":"\"{'lstm_pred': 3389.32, 'error_lstm': 15.762003208446776}\""}
+{"company":"wmt","data":"\"{'lstm_pred': 138.45, 'error_lstm': 15.762003208446776}\""}
+{"company":"fb","data":"\"{'lstm_pred': 306.342, 'error_lstm': 15.762003208446776}\""}
+{"company":"googl","data":"\"{'lstm_pred': 2281.3452, 'error_lstm': 15.762003208446776}\""}
+
+
